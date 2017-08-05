@@ -1,5 +1,7 @@
 package com.example.firedroid.firedroid;
 
+import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,11 +31,12 @@ public class ChooseYourLevel extends AppCompatActivity {
     }
 
     public void firebaseCat(View v){
-      downloadQuestions("BeginnersQuestion");
+      downloadQuestions("BeginnersQuestion",1);
     }
 
-    private void downloadQuestions(String categroy){
-        final List<ReadQuestions> questions = new ArrayList<>();
+
+    private void downloadQuestions(String categroy, final int categoryType){
+        final ArrayList<ReadQuestions> questions = new ArrayList<>();
         questions.clear();
 
         mDatabase.child(categroy).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -47,7 +50,7 @@ public class ChooseYourLevel extends AppCompatActivity {
                 }
 
                 // Launch GamePlatform Activity
-                launchGamePlatformActivity(questions);
+                launchGamePlatformActivity(questions,categoryType);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -59,7 +62,21 @@ public class ChooseYourLevel extends AppCompatActivity {
 
     }
 
-    private void launchGamePlatformActivity(List<ReadQuestions> r){
+    private void launchGamePlatformActivity(ArrayList<ReadQuestions> r, int categoryType){
+        if(Constants.categoryType.EASY.getValue() == categoryType){
+            Intent intent = new Intent(this, GamePlatform.class);
+            intent.putExtra("listOfQuestions", r);
+            this.startActivity(intent);
+        }else if(Constants.categoryType.INTERMEDIATE.getValue() == categoryType){
+            Intent intent = new Intent(this, GamePlatform.class);
+            intent.putExtra("listOfQuestions", r);
+            this.startActivity(intent);
+        }else if(Constants.categoryType.HARD.getValue() == categoryType){
+            Intent intent = new Intent(this, GamePlatform.class);
+            intent.putExtra("listOfQuestions", r);
+            this.startActivity(intent);
+        }else{
 
+        }
     }
 }

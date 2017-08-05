@@ -2,18 +2,20 @@ package com.example.firedroid.firedroid.java_objects;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.io.Serializable;
+
 /**
  * Created by Arel on 8/5/2017.
  */
 
 @IgnoreExtraProperties
-public class ReadQuestions {
+public class ReadQuestions implements Serializable{
     public String answer;
-    public String id;
     public String image1;
     public String image2;
     public String image3;
     public String image4;
+    public String qid;
     public String question;
     public String typeofquestion;
 
@@ -23,7 +25,7 @@ public class ReadQuestions {
 
     public ReadQuestions(String answer, String id, String image1, String image2, String image3, String image4, String question, String typeofquestion) {
         this.answer = answer;
-        this.id = id;
+        this.qid = id;
         this.image1 = image1;
         this.image2 = image2;
         this.image3 = image3;
@@ -33,11 +35,11 @@ public class ReadQuestions {
     }
 
     public String getId() {
-        return id;
+        return qid;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.qid = id;
     }
 
     public String getAnswer() {
