@@ -9,7 +9,7 @@ import java.io.Serializable;
  */
 
 @IgnoreExtraProperties
-public class ReadQuestions implements Serializable{
+public class ReadQuestions implements Serializable {
     public String answer;
     public String image1;
     public String image2;

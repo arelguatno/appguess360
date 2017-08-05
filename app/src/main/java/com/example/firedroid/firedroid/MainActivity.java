@@ -46,16 +46,16 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void playGameButton (View v) {
+    public void playGameButton(View v) {
         Intent intent = new Intent(this, ChooseYourLevel.class);
         startActivity(intent);
     }
 
-    public void aboutButton (View v) {
+    public void aboutButton(View v) {
 
     }
 
-    public void exitButton (View v) {
+    public void exitButton(View v) {
         onBackPressed();
     }
 
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void run() {
-                doubleBackToExitPressedOnce=false;
+                doubleBackToExitPressedOnce = false;
             }
         }, 2000);
     }

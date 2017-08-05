@@ -10,6 +10,7 @@ public class Constants {
         EASY(1), INTERMEDIATE(2), HARD(3);
 
         private final int value;
+
         private categoryType(int value) {
             this.value = value;
         }
@@ -19,7 +20,7 @@ public class Constants {
         }
     }
 
-    public enum typeOfQuestion{
+    public enum typeOfQuestion {
         TEXT, PICTURE
     }
 }

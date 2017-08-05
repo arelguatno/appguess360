@@ -30,28 +30,29 @@ public class ChooseYourLevel extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference();
     }
 
-    public void firebaseCat(View v){
-      downloadQuestions("BeginnersQuestion",1);
+    public void firebaseCat(View v) {
+        downloadQuestions("BeginnersQuestion", 1);
     }
 
 
-    private void downloadQuestions(String categroy, final int categoryType){
+    private void downloadQuestions(String categroy, final int categoryType) {
         final ArrayList<ReadQuestions> questions = new ArrayList<>();
         questions.clear();
 
         mDatabase.child(categroy).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.e(className+"Count " ,""+dataSnapshot.getChildrenCount());
+                Log.e(className + "Count ", "" + dataSnapshot.getChildrenCount());
 
-                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
-                    ReadQuestions  r = postSnapshot.getValue(ReadQuestions.class);
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    ReadQuestions r = postSnapshot.getValue(ReadQuestions.class);
                     questions.add(r);
                 }
 
                 // Launch GamePlatform Activity
-                launchGamePlatformActivity(questions,categoryType);
+                launchGamePlatformActivity(questions, categoryType);
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 System.out.println("Read failed: " + databaseError.getMessage());
@@ -62,20 +63,20 @@ public class ChooseYourLevel extends AppCompatActivity {
 
     }
 
-    private void launchGamePlatformActivity(ArrayList<ReadQuestions> r, int categoryType){
-        if(Constants.categoryType.EASY.getValue() == categoryType){
+    private void launchGamePlatformActivity(ArrayList<ReadQuestions> r, int categoryType) {
+        if (Constants.categoryType.EASY.getValue() == categoryType) {
             Intent intent = new Intent(this, GamePlatform.class);
             intent.putExtra("listOfQuestions", r);
             this.startActivity(intent);
-        }else if(Constants.categoryType.INTERMEDIATE.getValue() == categoryType){
+        } else if (Constants.categoryType.INTERMEDIATE.getValue() == categoryType) {
             Intent intent = new Intent(this, GamePlatform.class);
             intent.putExtra("listOfQuestions", r);
             this.startActivity(intent);
-        }else if(Constants.categoryType.HARD.getValue() == categoryType){
+        } else if (Constants.categoryType.HARD.getValue() == categoryType) {
             Intent intent = new Intent(this, GamePlatform.class);
             intent.putExtra("listOfQuestions", r);
             this.startActivity(intent);
-        }else{
+        } else {
 
         }
     }
