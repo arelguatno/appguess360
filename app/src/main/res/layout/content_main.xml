@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.firedroid.firedroid.MainActivity"
+    tools:showIn="@layout/activity_main">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/playGame"
+            android:layout_width="262dp"
+            android:layout_height="wrap_content"
+            android:onClick="playGameButton"
+            android:text="Play GAME"
+            android:layout_gravity="center"/>
+
+        <Button
+            android:id="@+id/about"
+            android:layout_width="263dp"
+            android:layout_height="wrap_content"
+            android:text="About"
+            android:onClick="aboutButton"
+            android:layout_gravity="center"/>
+        <Button
+            android:id="@+id/button"
+            android:layout_width="261dp"
+            android:layout_height="wrap_content"
+            android:text="EXIT"
+            android:onClick="exitButton"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
