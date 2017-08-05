@@ -1,9 +1,7 @@
 package com.example.firedroid.firedroid;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -11,23 +9,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.firedroid.firedroid.java_objects.ReadQuestions;
+import com.example.firedroid.firedroid.java_objects.Questions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Random;
 import java.util.Set;
 
 public class GamePlatform extends AppCompatActivity implements View.OnClickListener {
-    static ArrayList<ReadQuestions> listOfQuestions;
-    private int listOfTextViews[] = {R.id.textView1, R.id.textView2, R.id.textView3, R.id.textView4, R.id.textView5, R.id.textView6, R.id.textView7, R.id.textView8, R.id.textView9, R.id.textView10, R.id.textView11, R.id.textView12, R.id.textView13, R.id.textView14, R.id.textView15, R.id.textView16};
+    static ArrayList<Questions> listOfQuestions;
+    private int listOfTextViews[] = {R.id.textView1, R.id.textView2, R.id.textView3, R.id.textView4, R.id.textView5, R.id.textView6, R.id.textView7, R.id.textView8};
     private int listOfButtons[] = {R.id.button1, R.id.button2, R.id.button3, R.id.button4, R.id.button5, R.id.button6, R.id.button7, R.id.button8, R.id.button9, R.id.button10, R.id.button11, R.id.button12};
     private int listOfImages[] = {R.id.image1, R.id.image2, R.id.image3, R.id.image4};
-    private String alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private String alphabets[] = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "X", "Y", "Z"};
     private String className = "GamePlatform.";
     String correctAnswer;
 
@@ -36,7 +32,7 @@ public class GamePlatform extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_platform);
 
-        listOfQuestions = (ArrayList<ReadQuestions>) getIntent().getSerializableExtra("listOfQuestions");
+        listOfQuestions = (ArrayList<Questions>) getIntent().getSerializableExtra("listOfQuestions");
         populateQuestion();
     }
 
@@ -45,7 +41,6 @@ public class GamePlatform extends AppCompatActivity implements View.OnClickListe
 
         int randNum = (new Random()).nextInt(listOfQuestions.size());
         Log.d("arel", listOfQuestions.get(randNum).getTypeofquestion() + " / " + listOfQuestions.get(randNum).answer);
-
 
         if (listOfQuestions.get(randNum).getTypeofquestion().equals("PICTURES")) {
 
@@ -69,7 +64,9 @@ public class GamePlatform extends AppCompatActivity implements View.OnClickListe
             Collections.shuffle(Arrays.asList(shuffleButtons));
 
             // Populate correct answer first
-            correctAnswer = removeDuplicateLetters(listOfQuestions.get(randNum).getAnswer());
+
+            //correctAnswer = removeDuplicateLetters(listOfQuestions.get(randNum).getAnswer());
+            correctAnswer = listOfQuestions.get(randNum).getAnswer();
             for (int x = 0; x < correctAnswer.length(); x++) {  // Loop through text
                 Button btn = (Button) findViewById(listOfButtons[shuffleButtons[x]]);
                 btn.setText(String.valueOf(correctAnswer.charAt(x)));
@@ -79,9 +76,11 @@ public class GamePlatform extends AppCompatActivity implements View.OnClickListe
                 int answerLength = listOfQuestions.get(randNum).getAnswer().length() - 1;
                 if (i > answerLength) {
                     TextView txt = (TextView) findViewById(listOfTextViews[i]);
-                    txt.setVisibility(View.INVISIBLE);
+                    txt.setVisibility(View.GONE);
                 }
             }
+
+
             //Populate buttons without letter
             for (int i = 0; i < listOfButtons.length; i++) {
                 Button btn = (Button) findViewById(listOfButtons[i]);
@@ -132,20 +131,6 @@ public class GamePlatform extends AppCompatActivity implements View.OnClickListe
         return sb.toString();
     }
 
-//    private String removeLetterFromAlphabet(String wordTobeRemove) {
-//        String alpha = alphabets;
-//        StringBuilder sb = new StringBuilder(alpha);
-//
-//        for (int x = 0; x < alpha.length() - 1; x++) {
-//            for(int y = 0; y < wordTobeRemove.length()- 1; y++){
-//                if(String.valueOf(alpha.charAt(x)).equalsIgnoreCase(String.valueOf(wordTobeRemove.charAt(y)))){
-//                    sb.deleteCharAt(y);
-//                }
-//            }
-//        }
-//        return sb.toString();
-//    }
-
     @Override
     public void onClick(View view) {
         if (view instanceof Button) {
@@ -153,6 +138,7 @@ public class GamePlatform extends AppCompatActivity implements View.OnClickListe
                 if (view.getId() == listOfButtons[i]) {
                     Button btn = (Button) findViewById(listOfButtons[i]);
                     boolean good = sendTextToAnswerBox((String) btn.getText());
+
                     btn.setEnabled(good);
                     checkIfAnsweIsCorrect();
                 }
@@ -177,7 +163,6 @@ public class GamePlatform extends AppCompatActivity implements View.OnClickListe
 
             }
         }
-
     }
 
     private void checkIfAnsweIsCorrect() {

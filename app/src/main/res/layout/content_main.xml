@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,12 +8,14 @@
     tools:context="com.example.firedroid.firedroid.MainActivity"
     tools:showIn="@layout/activity_main">
 
+
     <LinearLayout
         android:id="@+id/playGameLinear"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:visibility="visible">
 
         <Button
             android:id="@+id/playGame"
@@ -40,4 +42,27 @@
 
     </LinearLayout>
 
-</android.support.constraint.ConstraintLayout>
+    <LinearLayout
+        android:id="@+id/userLogin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="visible">
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Login"
+            android:layout_margin="10dp" />
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/sign_in_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

@@ -9,7 +9,7 @@ import java.io.Serializable;
  */
 
 @IgnoreExtraProperties
-public class ReadQuestions implements Serializable {
+public class Questions implements Serializable {
     public String answer;
     public String image1;
     public String image2;
@@ -19,11 +19,11 @@ public class ReadQuestions implements Serializable {
     public String question;
     public String typeofquestion;
 
-    public ReadQuestions() {
+    public Questions() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public ReadQuestions(String answer, String id, String image1, String image2, String image3, String image4, String question, String typeofquestion) {
+    public Questions(String answer, String id, String image1, String image2, String image3, String image4, String question, String typeofquestion) {
         this.answer = answer;
         this.qid = id;
         this.image1 = image1;

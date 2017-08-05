@@ -5,6 +5,7 @@ package com.example.firedroid.firedroid;
  */
 
 public class Constants {
+    public static final String DB_NODE_USER_PROFILE = "userprofile";
 
     public enum categoryType {
         EASY(1), INTERMEDIATE(2), HARD(3);

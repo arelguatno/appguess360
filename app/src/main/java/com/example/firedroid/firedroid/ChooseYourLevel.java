@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import com.example.firedroid.firedroid.java_objects.ReadQuestions;
+import com.example.firedroid.firedroid.java_objects.Questions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -36,7 +36,7 @@ public class ChooseYourLevel extends AppCompatActivity {
 
 
     private void downloadQuestions(String categroy, final int categoryType) {
-        final ArrayList<ReadQuestions> questions = new ArrayList<>();
+        final ArrayList<Questions> questions = new ArrayList<>();
         questions.clear();
 
         mDatabase.child(categroy).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -45,7 +45,7 @@ public class ChooseYourLevel extends AppCompatActivity {
                 Log.e(className + "Count ", "" + dataSnapshot.getChildrenCount());
 
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    ReadQuestions r = postSnapshot.getValue(ReadQuestions.class);
+                    Questions r = postSnapshot.getValue(Questions.class);
                     questions.add(r);
                 }
 
@@ -63,7 +63,7 @@ public class ChooseYourLevel extends AppCompatActivity {
 
     }
 
-    private void launchGamePlatformActivity(ArrayList<ReadQuestions> r, int categoryType) {
+    private void launchGamePlatformActivity(ArrayList<Questions> r, int categoryType) {
         if (Constants.categoryType.EASY.getValue() == categoryType) {
             Intent intent = new Intent(this, GamePlatform.class);
             intent.putExtra("listOfQuestions", r);
