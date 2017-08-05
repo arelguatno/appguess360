@@ -19,9 +19,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".GamePlatform"
-            android:parentActivityName=".GamePlatform"></activity>
+        <activity
+            android:name=".GamePlatform"
+            android:parentActivityName=".GamePlatform" />
+        <activity android:name=".ChooseYourLevel"
+            android:parentActivityName=".GamePlatform" ></activity>
     </application>
 
 </manifest>

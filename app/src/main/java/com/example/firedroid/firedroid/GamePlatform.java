@@ -17,6 +17,7 @@ public class GamePlatform extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_platform);
         loadQuestions();
+        clearFields();
     }
 
     private void clearFields(){
@@ -38,6 +39,6 @@ public class GamePlatform extends AppCompatActivity {
     }
 
     private void loadQuestions(){
-        ASD
+
     }
 }
