@@ -38,5 +38,6 @@ public class GamePlatform extends AppCompatActivity {
     }
 
     private void loadQuestions(){
+        ASD
     }
 }
