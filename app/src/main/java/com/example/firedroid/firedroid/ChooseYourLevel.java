@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class ChooseYourLevel extends AppCompatActivity {
+public class ChooseYourLevel extends BaseActivity {
 
     private DatabaseReference mDatabase;
     private String className = "ChooseYourLevel.";

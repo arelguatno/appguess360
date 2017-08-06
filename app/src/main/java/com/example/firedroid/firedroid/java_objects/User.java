@@ -20,14 +20,6 @@ public class User {
     public User() {
     }
 
-    public User(String name, String emailAddress) {
-        this.name = name;
-        this.emailAddress = emailAddress;
-        HashMap<String, Object> timestampNowObject = new HashMap<String, Object>();
-        timestampNowObject.put("timestamp", ServerValue.TIMESTAMP);
-        this.lastUpdate = timestampNowObject;
-    }
-
     public User(String currentLevel, String name, String emailAddress) {
         this.currentLevel = currentLevel;
         this.name = name;

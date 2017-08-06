@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.firedroid.firedroid.java_objects.Questions;
 import com.example.firedroid.firedroid.java_objects.User;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -141,7 +142,7 @@ public class MainActivity extends BaseActivity implements
             } else {
                 // Google Sign In failed, update UI appropriately
                 // [START_EXCLUDE]
-                Log.d(TAG, "handleSignInResult:" + result.getStatus().toString() );
+                Log.d(TAG, "handleSignInResult:" + result.getStatus().getStatusMessage());
                 updateUI(null);
                 // [END_EXCLUDE]
             }
@@ -233,13 +234,20 @@ public class MainActivity extends BaseActivity implements
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
                     if (snapshot.exists()) {
-                        User logInUser = new User(playerName, user.getEmail());
+                        // Load Users
+                        User r = snapshot.getValue(User.class);
+                        User logInUser = new User(r.getCurrentLevel(),playerName, user.getEmail());
+                        setCurrentLevel(r.getCurrentLevel());
                         mFirebaseRef.child(Constants.DB_NODE_USER_PROFILE).child(user.getUid()).setValue(logInUser);
 
                     }else{
+                        // Create User Profile
                         User logInUser = new User("new_player",playerName, user.getEmail());
+                        setCurrentLevel("new_player");
                         mFirebaseRef.child(Constants.DB_NODE_USER_PROFILE).child(user.getUid()).setValue(logInUser);
                     }
+
+                    setUserUid(user.getUid());
                 }
 
                 @Override

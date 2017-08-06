@@ -10,6 +10,9 @@ import android.support.v7.app.AppCompatActivity;
 
 public class BaseActivity extends AppCompatActivity {
     protected static String playerName;
+    protected static String currentLevel;
+    protected static String userUid;
+
     @VisibleForTesting
     public ProgressDialog mProgressDialog;
 
@@ -35,4 +38,19 @@ public class BaseActivity extends AppCompatActivity {
         hideProgressDialog();
     }
 
+    public static String getCurrentLevel() {
+        return currentLevel;
+    }
+
+    public static void setCurrentLevel(String currentLevel) {
+        BaseActivity.currentLevel = currentLevel;
+    }
+
+    public static String getUserUid() {
+        return userUid;
+    }
+
+    public static void setUserUid(String userUid) {
+        BaseActivity.userUid = userUid;
+    }
 }
