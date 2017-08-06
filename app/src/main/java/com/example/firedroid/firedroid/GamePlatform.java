@@ -52,6 +52,7 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
     }
 
     private void updateCurrentLevel() {
+        try{
         Log.d("arel",getUserUid());
         Log.d("arel",getCurrentLevel());
         mDatabase.child(Constants.DB_NODE_USER_PROFILE).child(getUserUid()).child("currentLevel").setValue(getCurrentLevel(), new DatabaseReference.CompletionListener() {
@@ -64,6 +65,10 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
                 }
             }
         });
+
+        }catch (Exception ex){
+            Log.d("arel",ex.getMessage());
+        }
     }
 
     private void populateQuestion() {

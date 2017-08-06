@@ -230,36 +230,7 @@ public class MainActivity extends BaseActivity implements
 
             findViewById(R.id.userLogin).setVisibility(View.GONE);
             findViewById(R.id.playGameLinear).setVisibility(View.VISIBLE);
-
-
             playerName = getOnlyName(user.getDisplayName());
-
-            mFirebaseRef.child("userprofile").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    if (snapshot.exists()) {
-                        // Load Users
-                        User r = snapshot.getValue(User.class);
-                        User logInUser = new User(r.getCurrentLevel(), playerName, user.getEmail(), r.getStars());
-                        setCurrentLevel(r.getCurrentLevel());
-                        setUserStars(r.getStars());
-                        setUserUid(user.getUid());
-                        mFirebaseRef.child(Constants.DB_NODE_USER_PROFILE).child(user.getUid()).setValue(logInUser);
-                    } else {
-                        // Create User Profile
-                        User logInUser = new User("new_player", playerName, user.getEmail(), 0);
-                        setCurrentLevel("new_player");
-                        setUserStars(0);
-                        setUserUid(user.getUid());
-                        mFirebaseRef.child(Constants.DB_NODE_USER_PROFILE).child(user.getUid()).setValue(logInUser);
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
 
         } else {
 //            mStatusTextView.setText(R.string.signed_out);
