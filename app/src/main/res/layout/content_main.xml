@@ -17,7 +17,7 @@
         android:gravity="center"
         android:visibility="visible">
 
-        <Button
+        <android.support.v7.widget.AppCompatButton
             android:id="@+id/playGame"
             android:layout_width="262dp"
             android:layout_height="wrap_content"
@@ -25,14 +25,14 @@
             android:text="Play GAME"
             android:layout_gravity="center"/>
 
-        <Button
+        <android.support.v7.widget.AppCompatButton
             android:id="@+id/about"
             android:layout_width="263dp"
             android:layout_height="wrap_content"
             android:text="About"
             android:onClick="aboutButton"
             android:layout_gravity="center"/>
-        <Button
+        <android.support.v7.widget.AppCompatButton
             android:id="@+id/button"
             android:layout_width="261dp"
             android:layout_height="wrap_content"

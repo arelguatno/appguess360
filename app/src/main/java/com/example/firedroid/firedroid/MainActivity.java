@@ -31,8 +31,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends BaseActivity implements
         GoogleApiClient.OnConnectionFailedListener,
@@ -213,7 +216,7 @@ public class MainActivity extends BaseActivity implements
                 });
     }
 
-    private void updateUI(FirebaseUser user) {
+    private void updateUI(final FirebaseUser user) {
         hideProgressDialog();
         if (user != null) {
 
@@ -223,10 +226,27 @@ public class MainActivity extends BaseActivity implements
             findViewById(R.id.userLogin).setVisibility(View.GONE);
             findViewById(R.id.playGameLinear).setVisibility(View.VISIBLE);
 
+
             playerName = getOnlyName(user.getDisplayName());
-            User logInUser = new User(playerName, user.getEmail());
-            String emailAdd = user.getEmail().replace(".",",");
-            mFirebaseRef.child(Constants.DB_NODE_USER_PROFILE).child(user.getUid()).setValue(logInUser);
+
+            mFirebaseRef.child("userprofile").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        User logInUser = new User(playerName, user.getEmail());
+                        mFirebaseRef.child(Constants.DB_NODE_USER_PROFILE).child(user.getUid()).setValue(logInUser);
+
+                    }else{
+                        User logInUser = new User("new_player",playerName, user.getEmail());
+                        mFirebaseRef.child(Constants.DB_NODE_USER_PROFILE).child(user.getUid()).setValue(logInUser);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
 
         } else {
 //            mStatusTextView.setText(R.string.signed_out);

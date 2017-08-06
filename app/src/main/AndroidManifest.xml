@@ -21,9 +21,11 @@
         </activity>
         <activity
             android:name=".GamePlatform"
-            android:parentActivityName=".GamePlatform" />
+            android:parentActivityName=".GamePlatform"
+            android:label=""/>
         <activity android:name=".ChooseYourLevel"
-            android:parentActivityName=".GamePlatform" ></activity>
+            android:parentActivityName=".GamePlatform"
+            android:label="Choose Category"></activity>
     </application>
 
 </manifest>

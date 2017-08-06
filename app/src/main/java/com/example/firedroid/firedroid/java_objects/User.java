@@ -11,6 +11,8 @@ import java.util.HashMap;
  */
 @IgnoreExtraProperties
 public class User {
+
+    private String currentLevel;
     private String name;
     private String emailAddress;
     private HashMap<String, Object> lastUpdate;
@@ -26,12 +28,25 @@ public class User {
         this.lastUpdate = timestampNowObject;
     }
 
+    public User(String currentLevel, String name, String emailAddress) {
+        this.currentLevel = currentLevel;
+        this.name = name;
+        this.emailAddress = emailAddress;
+        HashMap<String, Object> timestampNowObject = new HashMap<String, Object>();
+        timestampNowObject.put("timestamp", ServerValue.TIMESTAMP);
+        this.lastUpdate = timestampNowObject;
+    }
+
     public String getName() {
         return name;
     }
 
     public String getEmailAddress() {
         return emailAddress;
+    }
+
+    public String getCurrentLevel() {
+        return currentLevel;
     }
 
     public HashMap<String, Object> getLastUpdate()  {

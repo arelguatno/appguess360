@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="10dp"
     android:orientation="vertical"
     tools:context="com.example.firedroid.firedroid.ChooseYourLevel">
 
-    <Button
+    <android.support.v7.widget.AppCompatButton
         android:id="@+id/firebaseCat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,11 +19,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Android"
-        android:onClick="androidCat"/>
+        android:onClick="androidCat"
+        android:enabled="false"/>
     <Button
         android:id="@+id/iosCat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="IOS"
-        android:onClick="iosCat"/>
+        android:onClick="iosCat"
+        android:enabled="false"/>
 </LinearLayout>
