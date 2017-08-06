@@ -1,15 +1,19 @@
 package com.example.firedroid.firedroid;
 
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.firedroid.firedroid.java_objects.Questions;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -20,8 +24,6 @@ import java.util.LinkedHashSet;
 import java.util.Random;
 import java.util.Set;
 
-import static android.R.attr.value;
-
 public class GamePlatform extends BaseActivity implements View.OnClickListener {
     static ArrayList<Questions> listOfQuestions;
     private int listOfTextViews[] = {R.id.textView1, R.id.textView2, R.id.textView3, R.id.textView4, R.id.textView5, R.id.textView6, R.id.textView7, R.id.textView8};
@@ -29,24 +31,39 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
     private int listOfImages[] = {R.id.image1, R.id.image2, R.id.image3, R.id.image4};
     private String alphabets[] = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "X", "Y", "Z"};
     private String className = "GamePlatform.";
-    private String currentLevel="";
+    private String currentLevel = "";
     String correctAnswer;
     private DatabaseReference mDatabase;
+    TextView timer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setToFullScreen();
         setContentView(R.layout.activity_game_platform);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-
+        timer = (TextView) findViewById(R.id.timer);
         listOfQuestions = (ArrayList<Questions>) getIntent().getSerializableExtra("listOfQuestions");
         populateQuestion();
         updateCurrentLevel();
+
     }
 
     private void updateCurrentLevel() {
-        mDatabase.child(Constants.DB_NODE_USER_PROFILE).child(getUserUid()).child("currentLevel").setValue(getCurrentLevel());
+        Log.d("arel",getUserUid());
+        Log.d("arel",getCurrentLevel());
+        mDatabase.child(Constants.DB_NODE_USER_PROFILE).child(getUserUid()).child("currentLevel").setValue(getCurrentLevel(), new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError != null) {
+                    Log.d("arel","Data could not be saved. " + databaseError.getMessage());
+                } else {
+                    Log.d("arel","Data saved successfully.");
+                }
+            }
+        });
     }
 
     private void populateQuestion() {
@@ -54,24 +71,26 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
 
         int randNum = 0;
         boolean previousQuestion = false;
-        Log.d("arel1",getCurrentLevel());
 
-        for(int x = 0 ; x < listOfQuestions.size() ; x++){
-            if(listOfQuestions.get(x).getId().toString().equalsIgnoreCase(getCurrentLevel())){
-                randNum=x;
-                previousQuestion=true;
+        for (int x = 0; x < listOfQuestions.size(); x++) {
+            if (listOfQuestions.get(x).getId().toString().equalsIgnoreCase(getCurrentLevel())) {
+                randNum = x;
+                previousQuestion = true;
             }
         }
 
-        if(previousQuestion){
-            currentLevel=listOfQuestions.get(randNum).getId();
+        if (previousQuestion) {
+            currentLevel = listOfQuestions.get(randNum).getId();
             setCurrentLevel(currentLevel);
-        }else{
+        } else {
             // Random Questions
             randNum = (new Random()).nextInt(listOfQuestions.size());
-            currentLevel=listOfQuestions.get(randNum).getId();
+            currentLevel = listOfQuestions.get(randNum).getId();
             setCurrentLevel(currentLevel);
         }
+
+        setCurrentIndexQuestion(randNum);
+
         if (listOfQuestions.get(randNum).getTypeofquestion().equals("PICTURES")) {
 
             // Images
@@ -123,18 +142,21 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
         } else {
 
         }
+        startTimer();
     }
 
     private void clearFields() {
         for (int i = 0; i < listOfTextViews.length; i++) {
             TextView txt = (TextView) findViewById(listOfTextViews[i]);
             txt.setText("");
+            txt.setVisibility(View.VISIBLE);
             txt.setOnClickListener(this);
         }
 
         for (int i = 0; i < listOfButtons.length; i++) {
             Button btn = (Button) findViewById(listOfButtons[i]);
             btn.setText("");
+            btn.setEnabled(true);
             btn.setOnClickListener(this);
         }
 
@@ -143,7 +165,6 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
             img.setImageResource(0);
             img.setOnClickListener(this);
         }
-
     }
 
     private String removeDuplicateLetters(String string) {
@@ -206,9 +227,17 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
         }
 
         if (playerAnswer.equalsIgnoreCase(correctAnswer)) {
-            Log.d("arel", ":)");
+            int newStars = getUserStars() + 3;
+            mDatabase.child(Constants.DB_NODE_USER_PROFILE).child(getUserUid()).child("stars").setValue(newStars);
+            setUserStars(newStars);
+            Toast.makeText(this, "CORRECT", Toast.LENGTH_SHORT).show();
+
+            // Generate new question
+            listOfQuestions.remove(getCurrentIndexQuestion());
+            setCurrentLevel("next_level");
+            populateQuestion();
         } else {
-            Log.d("arel", ":(");
+            Log.d("arel", "INCORRECT");
         }
     }
 
@@ -221,5 +250,27 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
             }
         }
         return true;
+    }
+    private void startTimer(){
+        new CountDownTimer(41000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                timer.setText("Answer within " + millisUntilFinished / 1000 + " seconds and get 3 STAR");
+            }
+
+            public void onFinish() {
+                new CountDownTimer(81000, 1000) {
+
+                    public void onTick(long millisUntilFinished) {
+                        timer.setText("Answer within " + millisUntilFinished / 1000 + " seconds and get 2 STAR");
+                    }
+
+                    public void onFinish() {
+                        timer.setText("This round gives you 1 STAR ");
+                    }
+                }.start();
+            }
+        }.start();
+
     }
 }

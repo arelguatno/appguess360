@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,6 +64,8 @@ public class MainActivity extends BaseActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setToFullScreen();
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -236,18 +240,19 @@ public class MainActivity extends BaseActivity implements
                     if (snapshot.exists()) {
                         // Load Users
                         User r = snapshot.getValue(User.class);
-                        User logInUser = new User(r.getCurrentLevel(),playerName, user.getEmail());
+                        User logInUser = new User(r.getCurrentLevel(), playerName, user.getEmail(), r.getStars());
                         setCurrentLevel(r.getCurrentLevel());
+                        setUserStars(r.getStars());
+                        setUserUid(user.getUid());
                         mFirebaseRef.child(Constants.DB_NODE_USER_PROFILE).child(user.getUid()).setValue(logInUser);
-
-                    }else{
+                    } else {
                         // Create User Profile
-                        User logInUser = new User("new_player",playerName, user.getEmail());
+                        User logInUser = new User("new_player", playerName, user.getEmail(), 0);
                         setCurrentLevel("new_player");
+                        setUserStars(0);
+                        setUserUid(user.getUid());
                         mFirebaseRef.child(Constants.DB_NODE_USER_PROFILE).child(user.getUid()).setValue(logInUser);
                     }
-
-                    setUserUid(user.getUid());
                 }
 
                 @Override
@@ -263,15 +268,16 @@ public class MainActivity extends BaseActivity implements
             findViewById(R.id.playGameLinear).setVisibility(View.GONE);
         }
     }
-    private String getOnlyName(String name){
+
+    private String getOnlyName(String name) {
         String result = "";
 
-        for(int x = 0 ; x < name.length() ; x++){
+        for (int x = 0; x < name.length(); x++) {
             String value = String.valueOf(name.charAt(x));
-            if(value.equals(" ")){
+            if (value.equals(" ")) {
                 return result;
             }
-            Log.d("getONlyName Result",result.concat(value));
+            Log.d("getONlyName Result", result.concat(value));
             result = result.concat(value);
         }
 

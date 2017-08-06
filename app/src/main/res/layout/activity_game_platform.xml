@@ -9,6 +9,24 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_weight="0.2"
+        android:layout_marginTop="3dp"
+        android:gravity="right"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/timer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Count Down Timer"
+            android:gravity="right"
+            android:layout_marginRight="20dp"
+            android:textAlignment="gravity" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:orientation="vertical"
         android:layout_weight="2">
 
@@ -17,7 +35,7 @@
             android:layout_height="0dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
             android:layout_weight="1"
             android:orientation="horizontal">
@@ -79,7 +97,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="15dp"
         android:layout_weight="0.5"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp">
@@ -283,11 +301,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:orientation="vertical"
-        android:layout_marginTop="4dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:layout_weight="1">
+        android:layout_marginTop="4dp"
+        android:layout_weight="0.9"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -300,30 +318,35 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="A" />
+
             <Button
                 android:id="@+id/button2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="A" />
+
             <Button
                 android:id="@+id/button3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="A" />
+
             <Button
                 android:id="@+id/button4"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="A" />
+
             <Button
                 android:id="@+id/button5"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="A" />
+
             <Button
                 android:id="@+id/button6"
                 android:layout_width="0dp"
@@ -343,30 +366,35 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="A" />
+
             <Button
                 android:id="@+id/button8"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="A" />
+
             <Button
                 android:id="@+id/button9"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="A" />
+
             <Button
                 android:id="@+id/button10"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="A" />
+
             <Button
                 android:id="@+id/button11"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="A" />
+
             <Button
                 android:id="@+id/button12"
                 android:layout_width="0dp"

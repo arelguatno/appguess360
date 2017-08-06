@@ -26,6 +26,7 @@ public class ChooseYourLevel extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setToFullScreen();
         setContentView(R.layout.activity_choose_your_level);
         mDatabase = FirebaseDatabase.getInstance().getReference();
     }
@@ -57,7 +58,7 @@ public class ChooseYourLevel extends BaseActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                System.out.println("Read failed: " + databaseError.getMessage());
+                Log.d("arel","Read failed: " + databaseError.getMessage());
 
             }
         });
