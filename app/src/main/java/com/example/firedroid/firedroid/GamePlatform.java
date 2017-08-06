@@ -20,6 +20,8 @@ import java.util.LinkedHashSet;
 import java.util.Random;
 import java.util.Set;
 
+import static android.R.attr.value;
+
 public class GamePlatform extends BaseActivity implements View.OnClickListener {
     static ArrayList<Questions> listOfQuestions;
     private int listOfTextViews[] = {R.id.textView1, R.id.textView2, R.id.textView3, R.id.textView4, R.id.textView5, R.id.textView6, R.id.textView7, R.id.textView8};
@@ -44,25 +46,32 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
     }
 
     private void updateCurrentLevel() {
-        mDatabase.child(Constants.DB_NODE_USER_PROFILE).child(getUserUid()).child("currentLevel").setValue(currentLevel);
-        setCurrentLevel(currentLevel);
+        mDatabase.child(Constants.DB_NODE_USER_PROFILE).child(getUserUid()).child("currentLevel").setValue(getCurrentLevel());
     }
 
     private void populateQuestion() {
         clearFields();
 
-        // Load previous question
         int randNum = 0;
-        if (listOfQuestions.contains(getCurrentLevel())){
-            randNum=listOfQuestions.indexOf(getCurrentLevel());
+        boolean previousQuestion = false;
+        Log.d("arel1",getCurrentLevel());
+
+        for(int x = 0 ; x < listOfQuestions.size() ; x++){
+            if(listOfQuestions.get(x).getId().toString().equalsIgnoreCase(getCurrentLevel())){
+                randNum=x;
+                previousQuestion=true;
+            }
         }
 
-//        int randNum = (new Random()).nextInt(listOfQuestions.size());
-
-
-        currentLevel=listOfQuestions.get(randNum).getId();
-        Log.d("arel", listOfQuestions.get(randNum).getTypeofquestion() + " / " + listOfQuestions.get(randNum).answer);
-
+        if(previousQuestion){
+            currentLevel=listOfQuestions.get(randNum).getId();
+            setCurrentLevel(currentLevel);
+        }else{
+            // Random Questions
+            randNum = (new Random()).nextInt(listOfQuestions.size());
+            currentLevel=listOfQuestions.get(randNum).getId();
+            setCurrentLevel(currentLevel);
+        }
         if (listOfQuestions.get(randNum).getTypeofquestion().equals("PICTURES")) {
 
             // Images

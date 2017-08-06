@@ -38,6 +38,7 @@ public class ChooseYourLevel extends BaseActivity {
     private void downloadQuestions(String categroy, final int categoryType) {
         final ArrayList<Questions> questions = new ArrayList<>();
         questions.clear();
+        showProgressDialog();
 
         mDatabase.child(categroy).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -51,6 +52,7 @@ public class ChooseYourLevel extends BaseActivity {
 
                 // Launch GamePlatform Activity
                 launchGamePlatformActivity(questions, categoryType);
+                hideProgressDialog();
             }
 
             @Override
