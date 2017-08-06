@@ -266,7 +266,7 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
         for (Character character : charSet) {
             sb.append(character);
         }
-
+asdasd
         return sb.toString();
     }
 
