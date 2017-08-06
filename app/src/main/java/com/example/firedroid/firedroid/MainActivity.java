@@ -4,20 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.firedroid.firedroid.java_objects.Questions;
 import com.example.firedroid.firedroid.java_objects.User;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -224,14 +218,12 @@ public class MainActivity extends BaseActivity implements
     private void updateUI(final FirebaseUser user) {
         hideProgressDialog();
         if (user != null) {
-
 //            mStatusTextView.setText(getString(R.string.google_status_fmt, user.getEmail()));
 //            mDetailTextView.setText(getString(R.string.firebase_status_fmt, user.getUid()));
-
             findViewById(R.id.userLogin).setVisibility(View.GONE);
             findViewById(R.id.playGameLinear).setVisibility(View.VISIBLE);
             playerName = getOnlyName(user.getDisplayName());
-
+            refreshUserProfile(user);
         } else {
 //            mStatusTextView.setText(R.string.signed_out);
 //            mDetailTextView.setText(null);
@@ -330,5 +322,34 @@ public class MainActivity extends BaseActivity implements
 //        } else if (i == R.id.disconnect_button) {
 //            revokeAccess();
         }
+    }
+
+    protected void refreshUserProfile(final FirebaseUser user){
+        mFirebaseRef.child("userprofile").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    // Load Users
+                    User r = snapshot.getValue(User.class);
+                    User logInUser = new User(r.getCurrentLevel(), playerName, user.getEmail(), r.getStars());
+                    setCurrentLevel(r.getCurrentLevel());
+                    setUserStars(r.getStars());
+                    mFirebaseRef.child(Constants.DB_NODE_USER_PROFILE).child(user.getUid()).setValue(logInUser);
+                } else {
+                    // Create User Profile
+                    User logInUser = new User("new_player", playerName, user.getEmail(), 0);
+                    setCurrentLevel("new_player");
+                    setUserStars(0);
+                    mFirebaseRef.child(Constants.DB_NODE_USER_PROFILE).child(user.getUid()).setValue(logInUser);
+                }
+
+                setUserUid(user.getUid());
+                setPhotoUrl(user.getPhotoUrl());
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

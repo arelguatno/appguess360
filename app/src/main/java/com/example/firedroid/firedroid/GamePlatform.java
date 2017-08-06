@@ -1,28 +1,49 @@
 package com.example.firedroid.firedroid;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.firedroid.firedroid.java_objects.Questions;
+import com.example.firedroid.firedroid.java_objects.User;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public class GamePlatform extends BaseActivity implements View.OnClickListener {
     static ArrayList<Questions> listOfQuestions;
@@ -33,8 +54,10 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
     private String className = "GamePlatform.";
     private String currentLevel = "";
     String correctAnswer;
-    private DatabaseReference mDatabase;
+    private TextView txtViewCurrentStars;;
+    private DatabaseReference mFirebaseRef;
     TextView timer;
+    CountDownTimer timer2;
 
 
     @Override
@@ -43,19 +66,76 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
         setToFullScreen();
         setContentView(R.layout.activity_game_platform);
 
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mFirebaseRef = FirebaseDatabase.getInstance().getReference();
         timer = (TextView) findViewById(R.id.timer);
+
         listOfQuestions = (ArrayList<Questions>) getIntent().getSerializableExtra("listOfQuestions");
         populateQuestion();
-        updateCurrentLevel();
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.game_platform, menu);
+        LinearLayout tracks = (LinearLayout) menu.findItem(R.id.action_user).getActionView();
+        txtViewCurrentStars =  tracks.findViewById(R.id.currentStars);
+
+        mFirebaseRef.child("userprofile").child(getUserUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    // Load Users
+                    User r = snapshot.getValue(User.class);
+                    txtViewCurrentStars.setText(String.valueOf(r.getStars()));
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_user) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     private void updateCurrentLevel() {
         try{
-        Log.d("arel",getUserUid());
-        Log.d("arel",getCurrentLevel());
-        mDatabase.child(Constants.DB_NODE_USER_PROFILE).child(getUserUid()).child("currentLevel").setValue(getCurrentLevel(), new DatabaseReference.CompletionListener() {
+            mFirebaseRef.child(Constants.DB_NODE_USER_PROFILE).child(getUserUid()).child("currentLevel").setValue(getCurrentLevel(), new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 if (databaseError != null) {
@@ -67,7 +147,7 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
         });
 
         }catch (Exception ex){
-            Log.d("arel",ex.getMessage());
+            Toast.makeText(this,ex.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -85,6 +165,7 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
         }
 
         if (previousQuestion) {
+            // Load previous answer
             currentLevel = listOfQuestions.get(randNum).getId();
             setCurrentLevel(currentLevel);
         } else {
@@ -147,7 +228,9 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
         } else {
 
         }
-        startTimer();
+
+        updateCurrentLevel();
+        startTimer(previousQuestion);
     }
 
     private void clearFields() {
@@ -232,14 +315,15 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
         }
 
         if (playerAnswer.equalsIgnoreCase(correctAnswer)) {
-            int newStars = getUserStars() + 3;
-            mDatabase.child(Constants.DB_NODE_USER_PROFILE).child(getUserUid()).child("stars").setValue(newStars);
+            int newStars = getUserStars() + getStarScore();
+            mFirebaseRef.child(Constants.DB_NODE_USER_PROFILE).child(getUserUid()).child("stars").setValue(newStars);
             setUserStars(newStars);
             Toast.makeText(this, "CORRECT", Toast.LENGTH_SHORT).show();
 
             // Generate new question
             listOfQuestions.remove(getCurrentIndexQuestion());
             setCurrentLevel("next_level");
+            timer2.cancel();
             populateQuestion();
         } else {
             Log.d("arel", "INCORRECT");
@@ -256,26 +340,26 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
         }
         return true;
     }
-    private void startTimer(){
-        new CountDownTimer(41000, 1000) {
-
+    private void startTimer(boolean previousQuestion){
+       timer2 =  new CountDownTimer(41000, 1000) {
             public void onTick(long millisUntilFinished) {
+                setStarScore(3);
                 timer.setText("Answer within " + millisUntilFinished / 1000 + " seconds and get 3 STAR");
             }
 
             public void onFinish() {
-                new CountDownTimer(81000, 1000) {
-
+                new CountDownTimer(80000, 1000) {
                     public void onTick(long millisUntilFinished) {
+                        setStarScore(2);
                         timer.setText("Answer within " + millisUntilFinished / 1000 + " seconds and get 2 STAR");
                     }
 
                     public void onFinish() {
-                        timer.setText("This round gives you 1 STAR ");
+                        setStarScore(1);
+                        timer.setText("This round gives you only 1 STAR ");
                     }
                 }.start();
             }
         }.start();
-
     }
 }
