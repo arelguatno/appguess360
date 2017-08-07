@@ -1,6 +1,7 @@
 package com.example.firedroid.firedroid;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -43,13 +44,10 @@ public class MainActivity extends BaseActivity implements
     private static final int RC_SIGN_IN = 9001;
     protected DatabaseReference mFirebaseRef;
 
-    // [START declare_auth]
-    private FirebaseAuth mAuth;
-    // [END declare_auth]
 
-    // [START declare_auth_listener]
+    private FirebaseAuth mAuth;
+
     private FirebaseAuth.AuthStateListener mAuthListener;
-    // [END declare_auth_listener]
 
     private GoogleApiClient mGoogleApiClient;
     private TextView mStatusTextView;
@@ -154,7 +152,7 @@ public class MainActivity extends BaseActivity implements
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
         // [START_EXCLUDE silent]
-        showProgressDialog();
+        showProgressDialog("Loading...");
         // [END_EXCLUDE]
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
@@ -325,7 +323,8 @@ public class MainActivity extends BaseActivity implements
     }
 
     protected void refreshUserProfile(final FirebaseUser user){
-        mFirebaseRef.child("userprofile").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        showProgressDialog("Refreshing users data...");
+        mFirebaseRef.child(Constants.DB_NODE_USERS_PROFILE).child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (snapshot.exists()) {
@@ -334,17 +333,39 @@ public class MainActivity extends BaseActivity implements
                     User logInUser = new User(r.getCurrentLevel(), playerName, user.getEmail(), r.getStars());
                     setCurrentLevel(r.getCurrentLevel());
                     setUserStars(r.getStars());
-                    mFirebaseRef.child(Constants.DB_NODE_USER_PROFILE).child(user.getUid()).setValue(logInUser);
+                    mFirebaseRef.child(Constants.DB_NODE_USERS_PROFILE).child(user.getUid()).setValue(logInUser);
                 } else {
                     // Create User Profile
                     User logInUser = new User("new_player", playerName, user.getEmail(), 0);
                     setCurrentLevel("new_player");
                     setUserStars(0);
-                    mFirebaseRef.child(Constants.DB_NODE_USER_PROFILE).child(user.getUid()).setValue(logInUser);
+                    mFirebaseRef.child(Constants.DB_NODE_USERS_PROFILE).child(user.getUid()).setValue(logInUser);
                 }
 
                 setUserUid(user.getUid());
                 setPhotoUrl(user.getPhotoUrl());
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        // Listen to users profile changes
+        mFirebaseRef.child(Constants.DB_NODE_USERS_PROFILE).child(user.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                // Listen for any changes users profile
+                if (snapshot.exists()) {
+                    User r = snapshot.getValue(User.class);
+
+                    setUserUid(user.getUid());
+                    setPhotoUrl(user.getPhotoUrl());
+                    setCurrentLevel(r.getCurrentLevel());
+                    setUserStars(r.getStars());
+                    setUserUid(snapshot.getKey());
+                    hideProgressDialog();
+
+                }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {

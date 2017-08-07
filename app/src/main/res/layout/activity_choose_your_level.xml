@@ -9,23 +9,24 @@
     tools:context="com.example.firedroid.firedroid.ChooseYourLevel">
 
     <android.support.v7.widget.AppCompatButton
-        android:id="@+id/firebaseCat"
+        android:id="@+id/cat_easy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Firebase"
-        android:onClick="firebaseCat"/>
+        android:onClick="cat_easy_onClick"
+        android:text="EASY" />
+
     <Button
-        android:id="@+id/androidCat"
+        android:id="@+id/cat_master"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Android"
-        android:onClick="androidCat"
+        android:text="MASTER"
+        android:onClick="cat_master_onCLick"
         android:enabled="false"/>
     <Button
-        android:id="@+id/iosCat"
+        android:id="@+id/cat_legend"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="IOS"
-        android:onClick="iosCat"
+        android:text="LEGEND"
+        android:onClick="cat_legend_onCLick"
         android:enabled="false"/>
 </LinearLayout>

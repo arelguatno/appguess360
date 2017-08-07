@@ -1,17 +1,13 @@
 package com.example.firedroid.firedroid;
 
 import android.content.Intent;
-import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import com.example.firedroid.firedroid.java_objects.Questions;
-import com.example.firedroid.firedroid.java_objects.User;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -19,15 +15,20 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+
+import static com.example.firedroid.firedroid.Constants.DB_NODE_EASY;
+import static com.example.firedroid.firedroid.Constants.DB_NODE_LEGEND;
+import static com.example.firedroid.firedroid.Constants.DB_NODE_MASTER;
 
 public class ChooseYourLevel extends BaseActivity {
 
     private DatabaseReference mDatabase;
     private String className = "ChooseYourLevel.";
-    private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private Button cat_easy;
+    ArrayList<String> singleAddress = new ArrayList<String>();
+    long totalQuestion=0;
+    long totalAnsweredQuestion=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,59 +36,77 @@ public class ChooseYourLevel extends BaseActivity {
         setToFullScreen();
         setContentView(R.layout.activity_choose_your_level);
         mDatabase = FirebaseDatabase.getInstance().getReference();
-
-//        mAuth = FirebaseAuth.getInstance();
-//
-//        mAuthListener = new FirebaseAuth.AuthStateListener() {
-//            @Override
-//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-//                FirebaseUser user = firebaseAuth.getCurrentUser();
-//                if (user != null) {
-//                    // User is signed in
-//                    refreshUserProfile(user);
-//                } else {
-//                    // User is signed out.
-//                    refreshUserProfile(user);
-//                }
-//
-//            }
-//        };
+        cat_easy = (Button) findViewById(R.id.cat_easy);
     }
 
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        mAuth.addAuthStateListener(mAuthListener);
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        if (mAuthListener != null) {
-//            mAuth.removeAuthStateListener(mAuthListener);
-//        }
-//    }
-
-    public void firebaseCat(View v) {
-        downloadQuestions("BeginnersQuestion", 1);
-    }
-
-
-    private void downloadQuestions(String categroy, final int categoryType) {
-        final ArrayList<Questions> questions = new ArrayList<>();
-        questions.clear();
-        showProgressDialog();
-
-        mDatabase.child(categroy).addListenerForSingleValueEvent(new ValueEventListener() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Count Easy answered question
+        mDatabase.child(Constants.DB_ANSWERED_QUESTION).child(getUserUid()).child(String.valueOf(Constants.categoryType.EASY.getValue())).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.e(className + "Count ", "" + dataSnapshot.getChildrenCount());
+                cat_easy.setText("");
+                singleAddress.clear();
+                Log.d(className + "Count ", "" + dataSnapshot.getChildrenCount());
+                totalAnsweredQuestion = dataSnapshot.getChildrenCount();
+                cat_easy.setText("EASY ( " + String.valueOf(dataSnapshot.getChildrenCount()) + " / ");
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    singleAddress.add((String) postSnapshot.child("qid").getValue());
+                }
+                // Count Easy questions
+                mDatabase.child(Constants.DB_NODE_EASY).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Log.d(className + "Easy Question total: ", "" + dataSnapshot.getChildrenCount());
+                        totalQuestion = dataSnapshot.getChildrenCount();
+                        cat_easy.setText(cat_easy.getText() + String.valueOf(dataSnapshot.getChildrenCount()) + " ) ");
+                        if(totalQuestion == totalAnsweredQuestion){
+                            cat_easy.setEnabled(false);
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("arel", "Read failed: " + databaseError.getMessage());
+
+            }
+        });
+
+
+    }
+
+    public void cat_easy_onClick(View v) {
+        downloadQuestions(DB_NODE_EASY, 1);
+    }
+
+    public void cat_master_onCLick(View v) {
+        downloadQuestions(DB_NODE_MASTER, 2);
+    }
+
+    public void cat_legend_onCLick(View v) {
+        downloadQuestions(DB_NODE_LEGEND, 3);
+    }
+
+    private void downloadQuestions(String category, final int categoryType) {
+        final ArrayList<Questions> questions = new ArrayList<>();
+        questions.clear();
+        showProgressDialog("Please wait...");
+
+        mDatabase.child(category).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(className + "Count ", "" + dataSnapshot.getChildrenCount());
 
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     Questions r = postSnapshot.getValue(Questions.class);
                     questions.add(r);
                 }
-
                 // Launch GamePlatform Activity
                 launchGamePlatformActivity(questions, categoryType);
                 hideProgressDialog();
@@ -95,24 +114,47 @@ public class ChooseYourLevel extends BaseActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.d("arel","Read failed: " + databaseError.getMessage());
+                Log.d("arel", "Read failed: " + databaseError.getMessage());
 
             }
         });
     }
+
     private void launchGamePlatformActivity(ArrayList<Questions> r, int categoryType) {
+
         if (Constants.categoryType.EASY.getValue() == categoryType) {
+
+            for (int x = 0; x < singleAddress.size(); x++) {
+                Log.d("arel", singleAddress.get(x));
+
+                for(int y =0; y < r.size(); y++){
+                    if(singleAddress.get(x).toString().equals(r.get(y).getId())){
+                        r.remove(y);
+                    }
+                }
+            }
+            Log.d("arel", String.valueOf(r.size()));
             Intent intent = new Intent(this, GamePlatform.class);
+            Log.d("totalquestions", String.valueOf(r.size()));
             intent.putExtra("listOfQuestions", r);
+            intent.putExtra("category", categoryType);
             this.startActivity(intent);
+
+
         } else if (Constants.categoryType.INTERMEDIATE.getValue() == categoryType) {
+
             Intent intent = new Intent(this, GamePlatform.class);
             intent.putExtra("listOfQuestions", r);
+            intent.putExtra("category", categoryType);
             this.startActivity(intent);
+
         } else if (Constants.categoryType.HARD.getValue() == categoryType) {
+
             Intent intent = new Intent(this, GamePlatform.class);
             intent.putExtra("listOfQuestions", r);
+            intent.putExtra("category", categoryType);
             this.startActivity(intent);
+
         } else {
 
         }

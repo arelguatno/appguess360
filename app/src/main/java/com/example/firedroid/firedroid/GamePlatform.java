@@ -1,24 +1,16 @@
 package com.example.firedroid.firedroid;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -33,32 +25,27 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 public class GamePlatform extends BaseActivity implements View.OnClickListener {
+
     static ArrayList<Questions> listOfQuestions;
+    String correctAnswer;
+    TextView timer;
+    CountDownTimer timer2;
+    int categoryLevel;
+
     private int listOfTextViews[] = {R.id.textView1, R.id.textView2, R.id.textView3, R.id.textView4, R.id.textView5, R.id.textView6, R.id.textView7, R.id.textView8};
     private int listOfButtons[] = {R.id.button1, R.id.button2, R.id.button3, R.id.button4, R.id.button5, R.id.button6, R.id.button7, R.id.button8, R.id.button9, R.id.button10, R.id.button11, R.id.button12};
     private int listOfImages[] = {R.id.image1, R.id.image2, R.id.image3, R.id.image4};
-    private String alphabets[] = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "X", "Y", "Z"};
-    private String className = "GamePlatform.";
     private String currentLevel = "";
-    String correctAnswer;
-    private TextView txtViewCurrentStars;;
+    private TextView txtViewCurrentStars;
     private DatabaseReference mFirebaseRef;
-    TextView timer;
-    CountDownTimer timer2;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +57,8 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
         timer = (TextView) findViewById(R.id.timer);
 
         listOfQuestions = (ArrayList<Questions>) getIntent().getSerializableExtra("listOfQuestions");
+        categoryLevel = getIntent().getIntExtra("category",1);
+
         populateQuestion();
     }
 
@@ -93,13 +82,13 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.game_platform, menu);
         LinearLayout tracks = (LinearLayout) menu.findItem(R.id.action_user).getActionView();
-        txtViewCurrentStars =  tracks.findViewById(R.id.currentStars);
+        txtViewCurrentStars = tracks.findViewById(R.id.currentStars);
 
-        mFirebaseRef.child("userprofile").child(getUserUid()).addValueEventListener(new ValueEventListener() {
+        mFirebaseRef.child(Constants.DB_NODE_USERS_PROFILE).child(getUserUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
+                // Listen for any changes users profile
                 if (snapshot.exists()) {
-                    // Load Users
                     User r = snapshot.getValue(User.class);
                     txtViewCurrentStars.setText(String.valueOf(r.getStars()));
                 }
@@ -134,21 +123,16 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
     }
 
     private void updateCurrentLevel() {
-        try{
-            mFirebaseRef.child(Constants.DB_NODE_USER_PROFILE).child(getUserUid()).child("currentLevel").setValue(getCurrentLevel(), new DatabaseReference.CompletionListener() {
+        mFirebaseRef.child(Constants.DB_NODE_USERS_PROFILE).child(getUserUid()).child("currentLevel").setValue(getCurrentLevel(), new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 if (databaseError != null) {
-                    Log.d("arel","Data could not be saved. " + databaseError.getMessage());
+                    Log.d("arel", "Data could not be saved. " + databaseError.getMessage());
                 } else {
-                    Log.d("arel","Data saved successfully.");
+                    Log.d("arel", "Data saved successfully.");
                 }
             }
         });
-
-        }catch (Exception ex){
-            Toast.makeText(this,ex.getMessage(), Toast.LENGTH_SHORT).show();
-        }
     }
 
     private void populateQuestion() {
@@ -266,7 +250,6 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
         for (Character character : charSet) {
             sb.append(character);
         }
-asdasd
         return sb.toString();
     }
 
@@ -316,17 +299,50 @@ asdasd
 
         if (playerAnswer.equalsIgnoreCase(correctAnswer)) {
             int newStars = getUserStars() + getStarScore();
-            mFirebaseRef.child(Constants.DB_NODE_USER_PROFILE).child(getUserUid()).child("stars").setValue(newStars);
+            mFirebaseRef.child(Constants.DB_NODE_USERS_PROFILE).child(getUserUid()).child("stars").setValue(newStars);
             setUserStars(newStars);
             Toast.makeText(this, "CORRECT", Toast.LENGTH_SHORT).show();
 
-            // Generate new question
-            listOfQuestions.remove(getCurrentIndexQuestion());
-            setCurrentLevel("next_level");
-            timer2.cancel();
-            populateQuestion();
+            // Add slight delay
+            new CountDownTimer(500, 1000) {
+                public void onTick(long millisUntilFinished) {
+                }
+                public void onFinish() {
+                    // Generate new question
+                    // Save answered questions
+                    mFirebaseRef.child(Constants.DB_ANSWERED_QUESTION).child(getUserUid()).child(String.valueOf(categoryLevel)).push().child("qid").setValue(getCurrentLevel());
+                    listOfQuestions.remove(getCurrentIndexQuestion());
+                    setCurrentLevel("next_level");
+                    timer2.cancel();
+                    populateQuestion();
+                }
+            }.start();
+
         } else {
             Log.d("arel", "INCORRECT");
+            int totalBlankTextView = 0;
+            for (int i = 0; i < listOfTextViews.length; i++) {
+                TextView txt = (TextView) findViewById(listOfTextViews[i]);
+                if (txt.getVisibility() == View.VISIBLE && !txt.getText().equals("")) {
+                    totalBlankTextView++;
+                }
+            }
+
+            if(totalBlankTextView == correctAnswer.length()){
+                Animation anim = new AlphaAnimation(0.0f, 1.0f);
+                anim.setDuration(100); //You can manage the blinking time with this parameter
+                anim.setStartOffset(100);
+                anim.setRepeatMode(Animation.REVERSE);
+                anim.setRepeatCount(Animation.INFINITE);
+                for (int i = 0; i < listOfTextViews.length; i++) {
+                    TextView txt = (TextView) findViewById(listOfTextViews[i]);
+                    if (txt.getVisibility() == View.VISIBLE && !txt.equals("")) {
+                        txt.startAnimation(anim);
+                    }
+                }
+                anim.cancel();
+            }
+
         }
     }
 
@@ -340,15 +356,16 @@ asdasd
         }
         return true;
     }
-    private void startTimer(boolean previousQuestion){
-       timer2 =  new CountDownTimer(41000, 1000) {
+
+    private void startTimer(boolean previousQuestion) {
+        timer2 = new CountDownTimer(41000, 1000) {
             public void onTick(long millisUntilFinished) {
                 setStarScore(3);
-                timer.setText("Answer within " + millisUntilFinished / 1000 + " seconds and get 3 STAR");
+                timer.setText("Answer within " + millisUntilFinished / 1000 + " seconds and get 3 STAR" + String.valueOf(getUserStars()));
             }
 
             public void onFinish() {
-                new CountDownTimer(80000, 1000) {
+               timer2=  new CountDownTimer(80000, 1000) {
                     public void onTick(long millisUntilFinished) {
                         setStarScore(2);
                         timer.setText("Answer within " + millisUntilFinished / 1000 + " seconds and get 2 STAR");

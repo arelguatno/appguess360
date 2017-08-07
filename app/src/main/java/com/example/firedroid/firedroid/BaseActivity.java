@@ -14,21 +14,21 @@ import android.view.WindowManager;
  */
 
 public class BaseActivity extends AppCompatActivity {
-    protected static String playerName;
-    protected static String currentLevel;
-    protected static String userUid;
-    protected static int userStars;
-    protected static int currentIndexQuestion;
+    static String playerName;
+    static String currentLevel;
+    static String userUid;
+    static int userStars;
+    static int currentIndexQuestion;
     static int starScore;
-    protected static Uri photoUrl;
+    static Uri photoUrl;
 
     @VisibleForTesting
     public ProgressDialog mProgressDialog;
 
-    public void showProgressDialog() {
+    public void showProgressDialog(String msg) {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this);
-            mProgressDialog.setMessage(getString(R.string.loading));
+            mProgressDialog.setMessage(msg);
             mProgressDialog.setIndeterminate(true);
         }
 
@@ -100,5 +100,7 @@ public class BaseActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
+
+
 
 }
