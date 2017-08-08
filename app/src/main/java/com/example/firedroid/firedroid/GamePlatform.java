@@ -361,7 +361,7 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
         timer2 = new CountDownTimer(41000, 1000) {
             public void onTick(long millisUntilFinished) {
                 setStarScore(3);
-                timer.setText("Answer within " + millisUntilFinished / 1000 + " seconds and get 3 STAR" + String.valueOf(getUserStars()));
+                timer.setText("Answer within " + millisUntilFinished / 1000 + " seconds and get 3 STAR");
             }
 
             public void onFinish() {
