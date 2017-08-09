@@ -14,20 +14,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="cat_easy_onClick"
-        android:text="EASY" />
+        android:text="EASY"
+        android:visibility="gone"/>
 
-    <Button
-        android:id="@+id/cat_master"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="MASTER"
-        android:onClick="cat_master_onCLick"
-        android:enabled="false"/>
-    <Button
-        android:id="@+id/cat_legend"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="LEGEND"
-        android:onClick="cat_legend_onCLick"
-        android:enabled="false"/>
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 </LinearLayout>

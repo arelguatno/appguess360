@@ -36,9 +36,12 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
 
     static ArrayList<Questions> listOfQuestions;
     String correctAnswer;
-    TextView timer;
+    TextView timer,txtQuestionBox;
     CountDownTimer timer2;
     int categoryLevel;
+
+    LinearLayout txtQuestion;
+    LinearLayout picQuestions;
 
     private int listOfTextViews[] = {R.id.textView1, R.id.textView2, R.id.textView3, R.id.textView4, R.id.textView5, R.id.textView6, R.id.textView7, R.id.textView8};
     private int listOfButtons[] = {R.id.button1, R.id.button2, R.id.button3, R.id.button4, R.id.button5, R.id.button6, R.id.button7, R.id.button8, R.id.button9, R.id.button10, R.id.button11, R.id.button12};
@@ -55,6 +58,10 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
 
         mFirebaseRef = FirebaseDatabase.getInstance().getReference();
         timer = (TextView) findViewById(R.id.timer);
+        txtQuestionBox = (TextView) findViewById(R.id.txtQuestionBox);
+
+        txtQuestion = (LinearLayout) findViewById(R.id.txtQuestion);
+        picQuestions = (LinearLayout) findViewById(R.id.picQuestions);
 
         listOfQuestions = (ArrayList<Questions>) getIntent().getSerializableExtra("listOfQuestions");
         categoryLevel = getIntent().getIntExtra("category",1);
@@ -162,7 +169,6 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
         setCurrentIndexQuestion(randNum);
 
         if (listOfQuestions.get(randNum).getTypeofquestion().equals("PICTURES")) {
-
             // Images
             ImageView img1 = (ImageView) findViewById(R.id.image1);
             ImageView img2 = (ImageView) findViewById(R.id.image2);
@@ -173,44 +179,48 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
             Glide.with(this).load(listOfQuestions.get(randNum).getImage2()).into(img2);
             Glide.with(this).load(listOfQuestions.get(randNum).getImage3()).into(img3);
             Glide.with(this).load(listOfQuestions.get(randNum).getImage4()).into(img4);
-
-            // Buttons
-            // Shuffle Buttons arrangement
-            Integer[] shuffleButtons = new Integer[listOfButtons.length];
-            for (int i = 0; i < listOfButtons.length; i++) {
-                shuffleButtons[i] = i;
-            }
-            Collections.shuffle(Arrays.asList(shuffleButtons));
-
-            // Populate correct answer first
-
-            //correctAnswer = removeDuplicateLetters(listOfQuestions.get(randNum).getAnswer());
-            correctAnswer = listOfQuestions.get(randNum).getAnswer();
-            for (int x = 0; x < correctAnswer.length(); x++) {  // Loop through text
-                Button btn = (Button) findViewById(listOfButtons[shuffleButtons[x]]);
-                btn.setText(String.valueOf(correctAnswer.charAt(x)));
-            }
-            // Hide some of answers box
-            for (int i = 0; i < listOfTextViews.length; i++) {
-                int answerLength = listOfQuestions.get(randNum).getAnswer().length() - 1;
-                if (i > answerLength) {
-                    TextView txt = (TextView) findViewById(listOfTextViews[i]);
-                    txt.setVisibility(View.GONE);
-                }
-            }
-
-
-            //Populate buttons without letter
-            for (int i = 0; i < listOfButtons.length; i++) {
-                Button btn = (Button) findViewById(listOfButtons[i]);
-                if (btn.getText().equals("")) {
-                    char randomLetter = (char) ('a' + Math.random() * ('z' - 'a' + 1));
-                    btn.setText(String.valueOf(randomLetter));
-                }
-            }
-
+            picQuestions.setVisibility(View.VISIBLE);
+            txtQuestion.setVisibility(View.GONE);
         } else {
+            txtQuestion.setVisibility(View.VISIBLE);
+            picQuestions.setVisibility(View.GONE);
+            txtQuestionBox.setText(listOfQuestions.get(randNum).getQuestion());
+        }
 
+
+        // Buttons
+        // Shuffle Buttons arrangement
+        Integer[] shuffleButtons = new Integer[listOfButtons.length];
+        for (int i = 0; i < listOfButtons.length; i++) {
+            shuffleButtons[i] = i;
+        }
+        Collections.shuffle(Arrays.asList(shuffleButtons));
+
+        // Populate correct answer first
+
+        //correctAnswer = removeDuplicateLetters(listOfQuestions.get(randNum).getAnswer());
+        correctAnswer = listOfQuestions.get(randNum).getAnswer();
+        for (int x = 0; x < correctAnswer.length(); x++) {  // Loop through text
+            Button btn = (Button) findViewById(listOfButtons[shuffleButtons[x]]);
+            btn.setText(String.valueOf(correctAnswer.charAt(x)));
+        }
+        // Hide some of answers box
+        for (int i = 0; i < listOfTextViews.length; i++) {
+            int answerLength = listOfQuestions.get(randNum).getAnswer().length() - 1;
+            if (i > answerLength) {
+                TextView txt = (TextView) findViewById(listOfTextViews[i]);
+                txt.setVisibility(View.GONE);
+            }
+        }
+
+
+        //Populate buttons without letter
+        for (int i = 0; i < listOfButtons.length; i++) {
+            Button btn = (Button) findViewById(listOfButtons[i]);
+            if (btn.getText().equals("")) {
+                char randomLetter = (char) ('a' + Math.random() * ('z' - 'a' + 1));
+                btn.setText(String.valueOf(randomLetter));
+            }
         }
 
         updateCurrentLevel();

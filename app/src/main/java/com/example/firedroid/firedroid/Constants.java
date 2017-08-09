@@ -9,9 +9,9 @@ public class Constants {
     public static final String DB_NODE_EASY = "BeginnersQuestion";
     public static final String DB_ANSWERED_QUESTION= "answered_question";
 
-//    public static final String DB_NODE_EASY = "easy_level_questions";
-    public static final String DB_NODE_MASTER = "master_level_questions";
-    public static final String DB_NODE_LEGEND = "legend_level_questions";
+//    public static final String DB_NODE_EASY = "firebase_level_questions";
+    public static final String DB_NODE_MASTER = "android_level_questions";
+    public static final String DB_NODE_LEGEND = "web_level_questions";
 
 
     public enum categoryType {

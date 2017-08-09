@@ -2,10 +2,16 @@ package com.example.firedroid.firedroid;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.example.firedroid.firedroid.adapter.RecyclerAdapter;
 import com.example.firedroid.firedroid.java_objects.Questions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -30,6 +36,10 @@ public class ChooseYourLevel extends BaseActivity {
     long totalQuestion=0;
     long totalAnsweredQuestion=0;
 
+    RecyclerView recyclerView;
+    RecyclerView.LayoutManager layoutManager;
+    RecyclerView.Adapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,12 +47,26 @@ public class ChooseYourLevel extends BaseActivity {
         setContentView(R.layout.activity_choose_your_level);
         mDatabase = FirebaseDatabase.getInstance().getReference();
         cat_easy = (Button) findViewById(R.id.cat_easy);
+
+        recyclerView =
+                (RecyclerView) findViewById(R.id.recycler_view);
+
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+        adapter = new RecyclerAdapter(ChooseYourLevel.this);
+        recyclerView.setAdapter(adapter);
+    }
+
+    public void onItemClickListener(){
+        downloadQuestions(DB_NODE_EASY, 1);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         // Count Easy answered question
+
         mDatabase.child(Constants.DB_ANSWERED_QUESTION).child(getUserUid()).child(String.valueOf(Constants.categoryType.EASY.getValue())).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -79,18 +103,6 @@ public class ChooseYourLevel extends BaseActivity {
         });
 
 
-    }
-
-    public void cat_easy_onClick(View v) {
-        downloadQuestions(DB_NODE_EASY, 1);
-    }
-
-    public void cat_master_onCLick(View v) {
-        downloadQuestions(DB_NODE_MASTER, 2);
-    }
-
-    public void cat_legend_onCLick(View v) {
-        downloadQuestions(DB_NODE_LEGEND, 3);
     }
 
     private void downloadQuestions(String category, final int categoryType) {
