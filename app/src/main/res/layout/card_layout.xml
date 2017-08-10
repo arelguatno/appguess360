@@ -32,7 +32,8 @@
             android:id="@+id/item_title"
             android:layout_toRightOf="@+id/item_image"
             android:layout_alignParentTop="true"
-            android:textSize="30sp"
+            android:text="Firebase"
+            android:textSize="18sp"
             />
 
         <TextView
@@ -40,8 +41,20 @@
             android:layout_height="wrap_content"
             android:id="@+id/item_detail"
             android:layout_toRightOf="@+id/item_image"
+            android:textSize="13sp"
             android:layout_below="@+id/item_title"
-            />
+            android:text="Difficulty: Easy" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/item_required_stars"
+            android:textSize="13sp"
+            android:text="Required stars: 0"
+            android:layout_below="@+id/item_detail"
+            android:layout_toRightOf="@+id/item_image"
+            android:layout_toEndOf="@+id/item_image" />
+
 
     </RelativeLayout>
 </android.support.v7.widget.CardView>

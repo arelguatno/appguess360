@@ -21,6 +21,8 @@ public class BaseActivity extends AppCompatActivity {
     static int currentIndexQuestion;
     static int starScore;
     static Uri photoUrl;
+    static String selectedCategory;
+    static String questions_node;
 
     @VisibleForTesting
     public ProgressDialog mProgressDialog;
@@ -101,6 +103,19 @@ public class BaseActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
+    public static String getSelectedCategory() {
+        return selectedCategory;
+    }
 
+    public static void setSelectedCategory(String selectedCategory) {
+        BaseActivity.selectedCategory = selectedCategory;
+    }
 
+    public static String getQuestions_node() {
+        return questions_node;
+    }
+
+    public static void setQuestions_node(String questions_node) {
+        BaseActivity.questions_node = questions_node;
+    }
 }

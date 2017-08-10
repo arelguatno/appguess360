@@ -1,7 +1,5 @@
 package com.example.firedroid.firedroid;
 
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -19,6 +17,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.firedroid.firedroid.java_objects.Questions;
 import com.example.firedroid.firedroid.java_objects.User;
+import com.example.firedroid.firedroid.utility.Constants;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -320,7 +319,7 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
                 public void onFinish() {
                     // Generate new question
                     // Save answered questions
-                    mFirebaseRef.child(Constants.DB_ANSWERED_QUESTION).child(getUserUid()).child(String.valueOf(categoryLevel)).push().child("qid").setValue(getCurrentLevel());
+                    mFirebaseRef.child(Constants.DB_ANSWERED_QUESTION).child(getUserUid()).child(getSelectedCategory()).push().child("qid").setValue(getCurrentLevel());
                     listOfQuestions.remove(getCurrentIndexQuestion());
                     setCurrentLevel("next_level");
                     timer2.cancel();
@@ -329,7 +328,6 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
             }.start();
 
         } else {
-            Log.d("arel", "INCORRECT");
             int totalBlankTextView = 0;
             for (int i = 0; i < listOfTextViews.length; i++) {
                 TextView txt = (TextView) findViewById(listOfTextViews[i]);
