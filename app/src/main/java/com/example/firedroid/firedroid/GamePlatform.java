@@ -1,5 +1,6 @@
 package com.example.firedroid.firedroid;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -150,7 +151,11 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
         boolean previousQuestion = false;
 
         // Check content of listview
-
+        if(listOfQuestions.size() == 0){
+            Toast.makeText(this,"CONRATULATIONS YOU FINISHED THIS CATEGORY",Toast.LENGTH_SHORT).show();
+            this.finish();
+            return;
+        }
 
         for (int x = 0; x < listOfQuestions.size(); x++) {
             if (listOfQuestions.get(x).getId().toString().equalsIgnoreCase(getCurrentLevel())) {
@@ -330,6 +335,10 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
                     setCurrentLevel("next_level");
                     timer2.cancel();
                     populateQuestion();
+
+                    Intent intent = new Intent(GamePlatform.this, CorrectAnswerForm.class);
+                    GamePlatform.this.startActivity(intent);
+
                 }
             }.start();
 
