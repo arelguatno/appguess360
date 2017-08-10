@@ -34,23 +34,6 @@
             android:layout_gravity="center"
             android:onClick="aboutButton"
             android:text="About" />
-
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/button"
-            android:layout_width="261dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:onClick="exitButton"
-            android:text="EXIT" />
-
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/profileTest"
-            android:layout_width="261dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:onClick="profileButton"
-            android:text="Profile" />
-
     </LinearLayout>
 
     <LinearLayout

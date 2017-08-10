@@ -314,6 +314,7 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
         if (playerAnswer.equalsIgnoreCase(correctAnswer)) {
             int newStars = getUserStars() + getStarScore();
             mFirebaseRef.child(Constants.DB_NODE_USERS_PROFILE).child(getUserUid()).child("stars").setValue(newStars);
+            mFirebaseRef.child(Constants.DB_NODE_USERS_PROFILE).child(getUserUid()).child("rank").setValue(getRankName(newStars));
             setUserStars(newStars);
             Toast.makeText(this, "CORRECT", Toast.LENGTH_SHORT).show();
 
@@ -391,5 +392,31 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
                 }.start();
             }
         }.start();
+    }
+
+    private String getRankName(int stars){
+        if(stars >= 1 && stars <= 10){
+            return "Bronze";
+        }else if (stars >= 11 && stars <= 20){
+            return "Silver";
+        }else if (stars >= 21 && stars <= 30){
+            return "Gold";
+        }else if (stars >= 31 && stars <= 40){
+            return "Crystal";
+        }else if (stars >= 41 && stars <= 50){
+            return "Master";
+        }else if (stars >= 51 && stars <= 60){
+            return "Champion";
+        }else if (stars >= 61 && stars <= 70){
+            return "Titan";
+        }else if (stars >= 71 && stars <= 80){
+            return "Avenger";
+        }else if (stars >= 81 && stars <= 90){
+            return "Emperor";
+        }else if(stars >= 91){
+            return "LEGEND";
+        }else{
+            return "???";
+        }
     }
 }
