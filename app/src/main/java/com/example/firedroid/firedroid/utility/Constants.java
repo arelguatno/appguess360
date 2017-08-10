@@ -6,12 +6,12 @@ package com.example.firedroid.firedroid.utility;
 
 public class Constants {
     public static final String DB_NODE_USERS_PROFILE = "usersprofile";
-    public static final String DB_NODE_EASY = "BeginnersQuestion";
     public static final String DB_ANSWERED_QUESTION= "answered_question";
 
-//    public static final String DB_NODE_EASY = "firebase_level_questions";
-    public static final String DB_NODE_ANDROID = "android_level_questions";
-    public static final String DB_NODE_WEB = "web_level_questions";
+
+    public static final String DB_NODE_EASY = "list_of_questions/firebase_category";
+    public static final String DB_NODE_ANDROID = "list_of_questions/firebase_android_category";
+    public static final String DB_NODE_WEB = "list_of_questions/firebase_web_category";
 
 
 //    public enum categoryType {

@@ -1,7 +1,9 @@
 package com.example.firedroid.firedroid;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -146,6 +148,9 @@ public class GamePlatform extends BaseActivity implements View.OnClickListener {
 
         int randNum = 0;
         boolean previousQuestion = false;
+
+        // Check content of listview
+
 
         for (int x = 0; x < listOfQuestions.size(); x++) {
             if (listOfQuestions.get(x).getId().toString().equalsIgnoreCase(getCurrentLevel())) {

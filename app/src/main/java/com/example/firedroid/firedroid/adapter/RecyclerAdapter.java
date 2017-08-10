@@ -30,7 +30,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             R.drawable.javascript};
 
     private String[] requiredStars= {"Click here to play",
-            "Required stars to play : ", "Required stars to play :"};
+            "Required stars to play :10 ", "Required stars to play :10"};
 
     public RecyclerAdapter(ChooseYourLevel chooseYourLevel) {
         this.r = chooseYourLevel;
