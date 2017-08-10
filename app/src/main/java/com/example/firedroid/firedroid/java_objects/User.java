@@ -15,16 +15,18 @@ public class User {
     private String currentLevel;
     private String name;
     private String emailAddress;
+    private String rank;
     private HashMap<String, Object> lastUpdate;
     private int stars;
 
     public User() {
     }
 
-    public User(String currentLevel, String name, String emailAddress, int stars) {
+    public User(String currentLevel, String name, String emailAddress, String rank, int stars) {
         this.currentLevel = currentLevel;
         this.name = name;
         this.emailAddress = emailAddress;
+        this.rank = rank;
         HashMap<String, Object> timestampNowObject = new HashMap<String, Object>();
         timestampNowObject.put("timestamp", ServerValue.TIMESTAMP);
         this.lastUpdate = timestampNowObject;
@@ -43,6 +45,10 @@ public class User {
         return currentLevel;
     }
 
+    public String getRank() {
+        return rank;
+    }
+
     public HashMap<String, Object> getLastUpdate()  {
         return lastUpdate;
     }
@@ -59,4 +65,6 @@ public class User {
     public long getTimestampCreatedLong() {
         return (long) lastUpdate.get("timestamp");
     }
+
+
 }

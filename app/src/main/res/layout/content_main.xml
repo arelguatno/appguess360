@@ -10,37 +10,46 @@
     tools:showIn="@layout/activity_main"
     android:orientation="horizontal">
 
-
     <LinearLayout
         android:id="@+id/playGameLinear"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:gravity="center"
-        android:visibility="visible">
+        android:orientation="vertical"
+        android:visibility="visible"
+        android:weightSum="1">
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/playGame"
             android:layout_width="262dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:onClick="playGameButton"
-            android:text="Play GAME"
-            android:layout_gravity="center"/>
+            android:text="Play GAME" />
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/about"
             android:layout_width="263dp"
             android:layout_height="wrap_content"
-            android:text="About"
+            android:layout_gravity="center"
             android:onClick="aboutButton"
-            android:layout_gravity="center"/>
+            android:text="About" />
+
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/button"
             android:layout_width="261dp"
             android:layout_height="wrap_content"
-            android:text="EXIT"
+            android:layout_gravity="center"
             android:onClick="exitButton"
-            android:layout_gravity="center"/>
+            android:text="EXIT" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/profileTest"
+            android:layout_width="261dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:onClick="profileButton"
+            android:text="Profile" />
 
     </LinearLayout>
 
@@ -64,6 +73,8 @@
             android:layout_height="wrap_content" />
 
     </LinearLayout>
+
+
 
 
 

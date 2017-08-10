@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +54,7 @@ public class MainActivity extends BaseActivity implements
     private TextView mStatusTextView;
     private TextView mDetailTextView;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,8 +62,6 @@ public class MainActivity extends BaseActivity implements
         setToFullScreen();
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         mFirebaseRef = FirebaseDatabase.getInstance().getReference();
         // Button listeners
         findViewById(R.id.sign_in_button).setOnClickListener(this);
@@ -269,7 +269,7 @@ public class MainActivity extends BaseActivity implements
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_logout) {
-            signOut();
+            // start
             return true;
         }
 
@@ -287,6 +287,12 @@ public class MainActivity extends BaseActivity implements
 
     public void exitButton(View v) {
         onBackPressed();
+    }
+
+
+    public void profileButton(View v) {
+        Intent intent = new Intent(this, PlayerProfile.class);
+        startActivity(intent);
     }
 
 
@@ -324,32 +330,39 @@ public class MainActivity extends BaseActivity implements
 
     protected void refreshUserProfile(final FirebaseUser user){
         showProgressDialog("Refreshing users data...");
+
+
         mFirebaseRef.child(Constants.DB_NODE_USERS_PROFILE).child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     // Load Users
                     User r = snapshot.getValue(User.class);
-                    User logInUser = new User(r.getCurrentLevel(), playerName, user.getEmail(), r.getStars());
+                    User logInUser = new User(r.getCurrentLevel(), playerName, user.getEmail(), r.getRank(), r.getStars());
                     setCurrentLevel(r.getCurrentLevel());
+                    setPlayerRank(r.getRank());
                     setUserStars(r.getStars());
                     mFirebaseRef.child(Constants.DB_NODE_USERS_PROFILE).child(user.getUid()).setValue(logInUser);
                 } else {
                     // Create User Profile
-                    User logInUser = new User("new_player", playerName, user.getEmail(), 0);
+                    User logInUser = new User("new_player", playerName, user.getEmail(),"RJS", 0);
                     setCurrentLevel("new_player");
+                    setPlayerRank("RJS");
                     setUserStars(0);
                     mFirebaseRef.child(Constants.DB_NODE_USERS_PROFILE).child(user.getUid()).setValue(logInUser);
                 }
 
                 setUserUid(user.getUid());
                 setPhotoUrl(user.getPhotoUrl());
+
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
         });
+
+
         // Listen to users profile changes
         mFirebaseRef.child(Constants.DB_NODE_USERS_PROFILE).child(user.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
@@ -361,6 +374,7 @@ public class MainActivity extends BaseActivity implements
                     setUserUid(user.getUid());
                     setPhotoUrl(user.getPhotoUrl());
                     setCurrentLevel(r.getCurrentLevel());
+                    setPlayerRank(r.getRank());
                     setUserStars(r.getStars());
                     setUserUid(snapshot.getKey());
                     hideProgressDialog();
@@ -372,5 +386,29 @@ public class MainActivity extends BaseActivity implements
 
             }
         });
+
+
     }
+
+    /*public void loadUserProfile() {
+
+        final TextView textView_name = (TextView)findViewById(R.id.playerName);
+        textView_name.setText(getPlayerName());
+
+        final TextView textView_rank = (TextView)findViewById(R.id.playerRank);
+        textView_rank.setText(getPlayerRank());
+
+       *//* ImageButton button_profile = (ImageButton)findViewById(R.id.playerPicture);
+        button_profile.setImageResource((R.drawable.));
+
+          button_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+          });*//*
+
+    }*/
+
+
 }
