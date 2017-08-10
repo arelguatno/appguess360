@@ -23,6 +23,7 @@ public class BaseActivity extends AppCompatActivity {
     static Uri photoUrl;
     static String selectedCategory;
     static String questions_node;
+    static String playerRank;
 
     @VisibleForTesting
     public ProgressDialog mProgressDialog;
@@ -118,4 +119,13 @@ public class BaseActivity extends AppCompatActivity {
     public static void setQuestions_node(String questions_node) {
         BaseActivity.questions_node = questions_node;
     }
+
+    public static String getPlayerRank() {
+        return playerRank;
+    }
+
+    public static void setPlayerRank(String playerRank) {
+        BaseActivity.playerRank = playerRank;
+    }
+
 }

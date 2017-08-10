@@ -10,9 +10,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
 
+import com.bumptech.glide.Glide;
 import com.example.firedroid.firedroid.java_objects.User;
 import com.example.firedroid.firedroid.utility.Constants;
 import com.google.android.gms.auth.api.Auth;
@@ -62,6 +66,8 @@ public class MainActivity extends BaseActivity implements
         setToFullScreen();
         setContentView(R.layout.activity_main);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         mFirebaseRef = FirebaseDatabase.getInstance().getReference();
         // Button listeners
         findViewById(R.id.sign_in_button).setOnClickListener(this);
@@ -257,6 +263,15 @@ public class MainActivity extends BaseActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        LinearLayout tracks = (LinearLayout) menu.findItem(R.id.action_logout).getActionView();
+        ImageView img = tracks.findViewById(R.id.playerPicture2);
+        img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, PlayerProfile.class);
+                startActivity(intent);            }
+        });
         return true;
     }
 
@@ -269,7 +284,8 @@ public class MainActivity extends BaseActivity implements
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_logout) {
-            // start
+            Intent intent = new Intent(this, PlayerProfile.class);
+            startActivity(intent);
             return true;
         }
 
@@ -355,6 +371,11 @@ public class MainActivity extends BaseActivity implements
                 setUserUid(user.getUid());
                 setPhotoUrl(user.getPhotoUrl());
 
+                ImageView img_player = (ImageView)findViewById(R.id.playerPicture2);
+                Glide.with(MainActivity.this)
+                        .load(getPhotoUrl())
+                        .into(img_player);
+
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -389,26 +410,6 @@ public class MainActivity extends BaseActivity implements
 
 
     }
-
-    /*public void loadUserProfile() {
-
-        final TextView textView_name = (TextView)findViewById(R.id.playerName);
-        textView_name.setText(getPlayerName());
-
-        final TextView textView_rank = (TextView)findViewById(R.id.playerRank);
-        textView_rank.setText(getPlayerRank());
-
-       *//* ImageButton button_profile = (ImageButton)findViewById(R.id.playerPicture);
-        button_profile.setImageResource((R.drawable.));
-
-          button_profile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-          });*//*
-
-    }*/
 
 
 }
