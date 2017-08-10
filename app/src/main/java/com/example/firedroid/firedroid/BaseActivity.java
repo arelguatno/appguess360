@@ -17,9 +17,9 @@ public class BaseActivity extends AppCompatActivity {
     static String playerName;
     static String currentLevel;
     static String userUid;
-    static int userStars;
+    static int userStars;  // Profile stars
     static int currentIndexQuestion;
-    static int starScore;
+    static int starScore;  // level stars
     static Uri photoUrl;
     static String selectedCategory;
     static String questions_node;
